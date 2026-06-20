@@ -1,0 +1,5 @@
+.history/
+IIT-ROPAR/node_modules/
+IIT-ROPAR/.env
+IIT-ROPAR/.history/
+*.db
