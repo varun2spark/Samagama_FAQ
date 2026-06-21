@@ -696,84 +696,67 @@ Authorization: Bearer <your_jwt_token>
 
 ## 🗄️ Data Models
 
-The platform uses **Prisma ORM** to define and manage database schemas in a type-safe manner. The core entities are **User**, **Ticket**, **FAQ**, **CommunityAnswer**, and **Notification**.
+```prisma
+model User {
+  id                String            @id @default(cuid())
+  name              String
+  email             String            @unique
+  password          String            // bcrypt hashed; never stored in plaintext
 
-### Entity Relationship Diagram
+  studentId         String?
+  college           String?
 
-```mermaid
-erDiagram
+  role              Role              @default(student)
+  isVerified        Boolean           @default(false)
+  contributionScore Int               @default(0)
 
-    USER ||--o{ TICKET : raises
-    USER ||--o{ COMMUNITYANSWER : writes
-    USER ||--o{ NOTIFICATION : receives
+  tickets           Ticket[]
+  answers           CommunityAnswer[]
+  notifications     Notification[]
+}
 
-    USER {
-        string id PK
-        string name
-        string email UK
-        string password
-        string studentId
-        string college
-        enum role
-        boolean isVerified
-        int contributionScore
-    }
+model Ticket {
+  id          String         @id @default(cuid())
+  title       String
+  description String
+  category    String
 
-    TICKET {
-        string id PK
-        string title
-        string description
-        string category
-        enum priority
-        enum status
-        string ticketCode UK
-        datetime createdAt
-        datetime updatedAt
-    }
+  priority    Priority
+  status      TicketStatus   @default(open)
 
-    FAQ {
-        string id PK
-        string question
-        string answer
-        string category
-        int views
-        boolean isOfficial
-    }
+  ticketCode  String         @unique
 
-    COMMUNITYANSWER {
-        string id PK
-        string question
-        string answer
-        boolean isVerified
-        datetime createdAt
-    }
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
 
-    NOTIFICATION {
-        string id PK
-        string message
-        boolean isRead
-        datetime createdAt
-    }
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model FAQ {
+  id         String    @id @default(cuid())
+  question   String
+  answer     String
+
+  category   String
+  views      Int       @default(0)
+
+  isOfficial Boolean   @default(true)
+}
+
+model CommunityAnswer {
+  id           String    @id @default(cuid())
+  question     String
+  answer       String
+
+  isVerified   Boolean   @default(false)
+
+  authorId     String
+  author       User      @relation(fields: [authorId], references: [id])
+
+  createdAt    DateTime  @default(now())
+}
 ```
-
-### Core Models
-
-| Model | Purpose |
-|:---|:---|
-| **User** | Stores intern and administrator information, authentication details, and contribution metrics. |
-| **Ticket** | Tracks support requests, priorities, statuses, and ownership. |
-| **FAQ** | Maintains the official knowledge base with categorized questions and answers. |
-| **CommunityAnswer** | Stores community-driven responses that can be reviewed and promoted to official FAQs. |
-| **Notification** | Delivers personalized updates related to tickets, announcements, and verified answers. |
-
-### Relationships
-
-- A **User** can raise multiple **Tickets**.
-- A **User** can submit multiple **Community Answers**.
-- A **User** can receive multiple **Notifications**.
-- Each **Ticket** belongs to a single **User**.
-- Each **Community Answer** is authored by a single **User**.
-- **FAQs** are maintained independently and can be created from verified community contributions.
 <br/>
 
 ---
