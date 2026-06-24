@@ -854,7 +854,7 @@ Binds to `0.0.0.0:PORT`. All unmatched routes fall back to `index.html` for clie
 <br/>
 
 ---
-PROJECT DEMO VIDEO LINK: https://drive.google.com/file/d/1mjTJSfc2nQxh7yAjniypSzORuzNQ1H6u/v iew?usp=drive_link 
+PROJECT DEMO VIDEO LINK: https://drive.google.com/file/d/1mjTJSfc2nQxh7yAjniypSzORuzNQ1H6u/view?usp=drive_link 
 
 ## 📄 License
 
